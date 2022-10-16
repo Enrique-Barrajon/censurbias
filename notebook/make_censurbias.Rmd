@@ -1,0 +1,91 @@
+---
+title: "censurbias"
+author: "Enrique Barrajon"
+date: '2022-06-14'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+parent_directory <- dirname(getwd())
+knitr::opts_knit$set(root.dir = parent_directory) # set the working directory to the parent directory
+```
+
+## R Markdown
+
+Once installed these packages, we may use them to update the package
+
+```{r}
+# rm(list = ls())
+library("devtools")
+library("roxygen2")
+```
+
+## Load survival with the basic datasets
+
+```{r}
+
+library("survival")
+formula1 <- Surv(time, status == 1) ~ x
+survfit1 <- survfit(formula1, data = leukemia)
+# plot(survfit1)
+
+```
+
+We check the parent directory
+
+```{r}
+
+# setwd(paste(head(strsplit(getwd(), "/")[[1]], -1), collapse = "/"))
+getwd()
+
+```
+
+## Update package
+
+Save files and build the help files with reoxygenise.
+
+```{r}
+
+roxygenise()
+# load_all(".")
+CBI(leukemia)
+CBI(survival::ovarian)
+CBI(survival::ovarian, time = "futime", status = "fustat")
+CBI(survival::lung, event = 2)
+CBI(survival::veteran)
+
+```
+
+Check documentation
+
+```{r}
+?CBI
+help("CBI")
+```
+
+# GitHub repository (https://github.com/Enrique-Barrajon/censurbias_pkg)
+
+Push repository censurbias_pkg from GitKraken app to gitHub with the pull and push url:
+
+https://github.com/Enrique-Barrajon/censurbias_pkg.git
+
+Now, unload the package functions
+
+```{r}
+
+detach(package:censurbias, unload=TRUE)
+
+```
+
+and load from GitHub
+
+```{r}
+
+install_github("Enrique-Barrajon/censurbias")
+library(censurbias)
+CBI(leukemia)
+
+```
+
+
