@@ -10,15 +10,15 @@
 #' @param time The name of the column corresponding to patient follow-up time.
 #' @param status The name of the column corresponding to patient status.
 #' @param event A list of labels corresponding to an event in the status column.
-#' 
+#'
 #' @return The result is the estimated censored bias index in the interval [0, 1].
-#' A value over 0.5 suggests right-censoring information bias.
+#' A threshold must be stablished.
 #' @export
 #' @references
 #' Catalogue of bias collaboration. Bankhead CR, Spencer EA, Nunan D. Information bias.
-#'  In: Sackett Catalogue Of Biases 2019. 
+#'  In: Sackett Catalogue Of Biases 2019.
 #'  \href{https://catalogofbias.org/biases/information-bias}{Information bias}
-#'  
+#'
 #'  Barrajón E and Barrajón L (2020). Effect of right censoring bias on survival analysis.
 #'  \href{https://arxiv.org/abs/2012.08649}{arXiv:2012.08649v1}
 #' @examples
@@ -38,18 +38,17 @@ CBI <- function(dataset, time = "time", status = "status", event = 1) {
       firstEvent <- min(events)
       lastEvent  <- max(events)
       LT <- sum(censor >= lastEvent)
-      pLT <- LT / (LT + length(events))
-      censor <- censor[censor >= firstEvent & censor < lastEvent]
-      toLT <- floor(pLT * length(censor))
-      n <- length(censor) - toLT
+      censored <- censor[censor >= firstEvent & censor < lastEvent]
+      censor2LT <- floor(length(censored) * LT / (LT + length(events)))
+      n <- length(censored) - censor2LT
       if(n < 1) return(0)
-      atRisk <- head(censor, n)
+      atRisk <- head(censored, length(censored) - censor2LT)
       bbi <- sum(atRisk < mean(events)) / length(atRisk)
-      adjustSimmetry <- median(censor) / lastEvent
-      centering <- log(0.5) / log(.96)
-      LT <- LT + toLT
-      pLT <- LT / (LT + length(events))
-      bbi ^ ((1 - pLT) * adjustSimmetry * centering)
+
+      adjustSimmetry <- median(censored) / lastEvent
+      adjustLT <- length(events) / (LT + censor2LT + length(events))
+      bbi ^ (adjustLT * adjustSimmetry)
 }
+
 
 
