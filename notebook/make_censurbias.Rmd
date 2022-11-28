@@ -48,20 +48,31 @@ Save files and build the help files with reoxygenise.
 ```{r}
 
 roxygenise()
-# load_all(".")
-CBI(leukemia)
-CBI(survival::ovarian)
-CBI(survival::ovarian, time = "futime", status = "fustat")
-CBI(survival::lung, event = 2)
-CBI(survival::veteran)
 
 ```
 
 Check documentation
 
 ```{r}
+# load_all(".")
 ?CBI
 help("CBI")
+```
+
+
+```{r}
+
+CBI(leukemia) # 0.006033516
+# CBI(survival::ovarian)
+CBI(survival::ovarian, time = "futime", status = "fustat") # 0
+CBI(survival::lung, event = 2) # 0.02949085
+CBI(survival::veteran)         # 0.5019982
+EBI(leukemia) # 0.006033516
+# EBI(survival::ovarian)
+EBI(survival::ovarian, time = "futime", status = "fustat") # 0
+EBI(survival::lung, event = 2) # 0.02949085
+EBI(survival::veteran)         # 0.5019982
+
 ```
 
 # GitHub repository (https://github.com/Enrique-Barrajon/censurbias_pkg)
